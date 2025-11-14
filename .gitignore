@@ -76,3 +76,5 @@ aws-credentials/
 # Docker
 .dockerignore
 docker-compose.override.yml
+
+/doc
