@@ -1,5 +1,7 @@
 import db from '../config/database';
 import { Occasion, OutfitItem } from '../types';
+import { generateOutfitWithOpenAI } from './aiServices';
+import getSignedImageUrl from './s3Service';
 
 const OCCASION_FORMALITY_MAP: Record<string, 'casual' | 'business_casual' | 'formal'> = {
   casual_friday: 'business_casual',
@@ -8,33 +10,33 @@ const OCCASION_FORMALITY_MAP: Record<string, 'casual' | 'business_casual' | 'for
   weekend_casual: 'casual',
 };
 
-const NEUTRAL_COLORS = ['black', 'white', 'gray', 'grey', 'beige', 'navy', 'brown', 'tan', 'cream'];
+// const NEUTRAL_COLORS = ['black', 'white', 'gray', 'grey', 'beige', 'navy', 'brown', 'tan', 'cream'];
 
-function colorsMatch(colors1: string[], colors2: string[]): boolean {
-  const allColors = [...colors1, ...colors2].map((c) => c.toLowerCase());
+// function colorsMatch(colors1: string[], colors2: string[]): boolean {
+//   const allColors = [...colors1, ...colors2].map((c) => c.toLowerCase());
 
-  if (allColors.some((c) => NEUTRAL_COLORS.includes(c))) {
-    return true;
-  }
+//   if (allColors.some((c) => NEUTRAL_COLORS.includes(c))) {
+//     return true;
+//   }
 
-  if (colors1.some((c) => colors2.map((c2) => c2.toLowerCase()).includes(c.toLowerCase()))) {
-    return true;
-  }
+//   if (colors1.some((c) => colors2.map((c2) => c2.toLowerCase()).includes(c.toLowerCase()))) {
+//     return true;
+//   }
 
-  return false;
-}
+//   return false;
+// }
 
-interface GeneratedOutfit {
-  items: {
-    top?: OutfitItem | null;
-    bottom?: OutfitItem | null;
-    dress?: OutfitItem | null;
-    shoes?: OutfitItem | null;
-  };
-}
+// interface GeneratedOutfit {
+//   items: {
+//     top?: OutfitItem | null;
+//     bottom?: OutfitItem | null;
+//     dress?: OutfitItem | null;
+//     shoes?: OutfitItem | null;
+//   };
+// }
 
 interface OutfitsResponse {
-  outfits: GeneratedOutfit[];
+  itemIds: string[];
 }
 
 interface SaveOutfitResponse {
@@ -60,6 +62,7 @@ function formatItem(item: any): OutfitItem {
 }
 
 async function generateOutfits(userId: string, occasion: Occasion): Promise<OutfitsResponse> {
+  console.log(userId, occasion);
   if (!OCCASION_FORMALITY_MAP[occasion]) {
     const error = new Error('Invalid occasion');
     (error as any).statusCode = 400;
@@ -67,57 +70,27 @@ async function generateOutfits(userId: string, occasion: Occasion): Promise<Outf
     throw error;
   }
 
-  const formalityLevel = OCCASION_FORMALITY_MAP[occasion];
-
   const result = await db.query(
     `SELECT * FROM clothing_items
-     WHERE user_id = $1 AND status = 'approved' AND formality_level = $2`,
-    [userId, formalityLevel]
+     WHERE user_id = $1 AND status = 'approved'`,
+    [userId]
   );
 
   const wardrobe = result.rows;
+  console.log(wardrobe);
+  const imageUrls = await Promise.all(
+    wardrobe.map(async (item: any) => ({
+      imageUrl: await getSignedImageUrl(item.s3_key),
+      id: item.id,
+    }))
+  );
 
-  const tops = wardrobe.filter((item: any) => item.category === 'top');
-  const bottoms = wardrobe.filter((item: any) => item.category === 'bottom');
-  const dresses = wardrobe.filter((item: any) => item.category === 'dress');
-  const shoes = wardrobe.filter((item: any) => item.category === 'shoes');
+  console.log(imageUrls);
 
-  const outfits: GeneratedOutfit[] = [];
+  const itemIds = await generateOutfitWithOpenAI(occasion, imageUrls);
 
-  for (const dress of dresses.slice(0, 2)) {
-    const matchingShoes = shoes.find((shoe: any) => colorsMatch(dress.colors, shoe.colors));
-
-    outfits.push({
-      items: {
-        dress: formatItem(dress),
-        shoes: matchingShoes ? formatItem(matchingShoes) : null,
-      },
-    });
-  }
-
-  for (const top of tops) {
-    for (const bottom of bottoms) {
-      if (colorsMatch(top.colors, bottom.colors)) {
-        const matchingShoes = shoes.find((shoe: any) =>
-          colorsMatch(shoe.colors, [...top.colors, ...bottom.colors])
-        );
-
-        outfits.push({
-          items: {
-            top: formatItem(top),
-            bottom: formatItem(bottom),
-            shoes: matchingShoes ? formatItem(matchingShoes) : null,
-          },
-        });
-
-        if (outfits.length >= 5) break;
-      }
-    }
-
-    if (outfits.length >= 5) break;
-  }
-
-  return { outfits: outfits.slice(0, 5) };
+  console.log(itemIds);
+  return { itemIds };
 }
 
 async function saveOutfit(
