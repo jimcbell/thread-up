@@ -50,7 +50,10 @@ const OutfitsPage = () => {
         );
       } else {
         setGeneratedOutfits(data);
-        setToast({ message: `Generated ${data.length} outfit${data.length !== 1 ? 's' : ''}!`, type: 'success' });
+        setToast({
+          message: `Generated ${data.length} outfit${data.length !== 1 ? 's' : ''}!`,
+          type: 'success',
+        });
       }
     } catch (err) {
       console.error('Failed to generate outfits:', err);
@@ -79,7 +82,7 @@ const OutfitsPage = () => {
 
       // If on saved tab, remove from display
       if (activeTab === 'saved') {
-        setSavedOutfits(prev => prev.filter(outfit => outfit.id !== outfitId));
+        setSavedOutfits((prev) => prev.filter((outfit) => outfit.id !== outfitId));
       }
     } catch (err) {
       console.error('Failed to unsave outfit:', err);
@@ -88,7 +91,7 @@ const OutfitsPage = () => {
   };
 
   const isOutfitSaved = (outfitId) => {
-    return savedOutfits.some(outfit => outfit.id === outfitId);
+    return savedOutfits.some((outfit) => outfit.id === outfitId);
   };
 
   return (
@@ -96,11 +99,9 @@ const OutfitsPage = () => {
       <Header />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-8">
+        <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Outfit Generator</h1>
-          <p className="text-gray-600">
-            Get AI-powered outfit suggestions for any occasion
-          </p>
+          <p className="text-gray-600">Get AI-powered outfit suggestions for any occasion</p>
         </div>
 
         {/* Tabs */}
@@ -131,9 +132,7 @@ const OutfitsPage = () => {
         {activeTab === 'generate' && (
           <>
             <div className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Select an Occasion
-              </h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Select an Occasion</h2>
               <OccasionSelector
                 selectedOccasion={selectedOccasion}
                 onSelect={setSelectedOccasion}
@@ -161,10 +160,7 @@ const OutfitsPage = () => {
               <div className="mb-8">
                 <ErrorMessage message={error} />
                 <div className="mt-4 text-center">
-                  <button
-                    onClick={() => navigate('/upload')}
-                    className="btn-primary"
-                  >
+                  <button onClick={() => navigate('/upload')} className="btn-primary">
                     Upload More Items
                   </button>
                 </div>
@@ -174,13 +170,8 @@ const OutfitsPage = () => {
             {generatedOutfits.length > 0 && (
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-gray-900">
-                    Outfit Suggestions
-                  </h2>
-                  <button
-                    onClick={handleGenerateOutfits}
-                    className="btn-secondary"
-                  >
+                  <h2 className="text-xl font-semibold text-gray-900">Outfit Suggestions</h2>
+                  <button onClick={handleGenerateOutfits} className="btn-secondary">
                     Generate More
                   </button>
                 </div>
@@ -224,16 +215,9 @@ const OutfitsPage = () => {
                     d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                   />
                 </svg>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No saved outfits yet
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  Generate some outfits and save your favorites!
-                </p>
-                <button
-                  onClick={() => setActiveTab('generate')}
-                  className="btn-primary"
-                >
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No saved outfits yet</h3>
+                <p className="text-gray-600 mb-6">Generate some outfits and save your favorites!</p>
+                <button onClick={() => setActiveTab('generate')} className="btn-primary">
                   Generate Outfits
                 </button>
               </div>

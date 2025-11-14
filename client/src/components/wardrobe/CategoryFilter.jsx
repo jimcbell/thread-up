@@ -9,15 +9,15 @@ const CATEGORIES = [
 
 const CategoryFilter = ({ activeCategory, onCategoryChange }) => {
   return (
-    <div className="flex flex-wrap gap-2 mb-6">
+    <div className="flex flex-wrap gap-3 mb-8 justify-center">
       {CATEGORIES.map(({ value, label }) => (
         <button
           key={value || 'all'}
           onClick={() => onCategoryChange(value)}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+          className={`px-6 py-3 rounded-lg font-bold transition-all ${
             activeCategory === value
-              ? 'bg-primary-600 text-white'
-              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+              ? 'bg-blue-600 text-white shadow-xl scale-110 border-2 border-blue-700'
+              : 'bg-gray-200 text-gray-800 hover:bg-gray-300 border-2 border-gray-300'
           }`}
         >
           {label}

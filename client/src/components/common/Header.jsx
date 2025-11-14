@@ -25,21 +25,23 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`text-sm font-medium transition-colors ${
-                  isActive(link.path)
-                    ? 'text-primary-600 border-b-2 border-primary-600'
-                    : 'text-gray-700 hover:text-primary-600'
-                } pb-1`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+          <div className="absolute left-1/2 transform -translate-x-1/2">
+            <nav className="hidden md:flex items-center space-x-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`text-sm font-medium transition-colors ${
+                    isActive(link.path)
+                      ? 'text-primary-600 border-b-2 border-primary-600'
+                      : 'text-gray-700 hover:text-primary-600'
+                  } pb-1`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
 
           {/* User Menu */}
           <div className="hidden md:flex items-center space-x-4">

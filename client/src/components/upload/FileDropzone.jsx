@@ -75,28 +75,61 @@ const FileDropzone = ({ onFilesSelected, maxFiles = 10, maxFileSize = 10 * 1024 
       }`}
     >
       <div className="flex flex-col items-center">
+        {/* Stylized Wardrobe/Hanger Icon */}
         <svg
-          className={`w-16 h-16 mb-4 ${isDragging ? 'text-primary-500' : 'text-gray-400'}`}
+          className={`w-24 h-24 mb-6 transition-transform duration-300 ${
+            isDragging ? 'scale-110 text-blue-500' : 'text-blue-400'
+          }`}
+          viewBox="0 0 200 200"
           fill="none"
           stroke="currentColor"
-          viewBox="0 0 24 24"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         >
+          {/* Hanger hook */}
+          <path d="M100 20 Q85 20 85 35 Q85 50 100 50 Q115 50 115 35 Q115 20 100 20" />
+
+          {/* Hanger rod */}
+          <line x1="50" y1="55" x2="150" y2="55" strokeWidth="3" />
+
+          {/* First clothing item (left) */}
           <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+            d="M70 55 L60 80 Q55 100 70 110 L90 110 Q105 100 100 80 Z"
+            fill="currentColor"
+            fillOpacity="0.2"
           />
+          <path d="M70 55 L60 80 Q55 100 70 110 L90 110 Q105 100 100 80 Z" />
+
+          {/* Second clothing item (center) */}
+          <path
+            d="M100 55 L80 85 Q75 110 100 125 L120 125 Q145 110 140 85 Z"
+            fill="currentColor"
+            fillOpacity="0.3"
+          />
+          <path d="M100 55 L80 85 Q75 110 100 125 L120 125 Q145 110 140 85 Z" />
+
+          {/* Third clothing item (right) */}
+          <path
+            d="M130 55 L120 80 Q115 100 130 110 L150 110 Q165 100 160 80 Z"
+            fill="currentColor"
+            fillOpacity="0.2"
+          />
+          <path d="M130 55 L120 80 Q115 100 130 110 L150 110 Q165 100 160 80 Z" />
+
+          {/* Plus sign for adding */}
+          <circle cx="100" cy="160" r="25" fill="currentColor" fillOpacity="0.1" />
+          <line x1="100" y1="145" x2="100" y2="175" strokeWidth="3" />
+          <line x1="85" y1="160" x2="115" y2="160" strokeWidth="3" />
         </svg>
 
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Drop your clothing photos here
-        </h3>
-        <p className="text-sm text-gray-600 mb-4">
-          or click to browse your files
-        </p>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">Drop your clothing photos here</h3>
+        <p className="text-sm text-gray-600 mb-4">or click to browse your files</p>
 
-        <label className="btn-primary cursor-pointer">
+        <label className="inline-block cursor-pointer mb-8">
+          <div className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105">
+            Select Files
+          </div>
           <input
             type="file"
             multiple
@@ -104,12 +137,53 @@ const FileDropzone = ({ onFilesSelected, maxFiles = 10, maxFileSize = 10 * 1024 
             onChange={handleFileInput}
             className="hidden"
           />
-          Select Files
         </label>
 
-        <p className="mt-4 text-xs text-gray-500">
-          Supports JPG, PNG, WebP (up to {maxFiles} files, max 10MB each)
-        </p>
+        {/* Upload Requirements Block - Horizontal */}
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 w-full">
+          <h4 className="text-sm font-semibold text-gray-900 mb-6">Upload Requirements</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            <div className="flex flex-col items-center text-center space-y-2">
+              <svg className="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <div>
+                <p className="text-sm font-medium text-gray-700">File Types</p>
+                <p className="text-xs text-gray-600">JPG, PNG, WebP</p>
+              </div>
+            </div>
+            <div className="flex flex-col items-center text-center space-y-2">
+              <svg className="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <div>
+                <p className="text-sm font-medium text-gray-700">File Size</p>
+                <p className="text-xs text-gray-600">Maximum 10 MB per file</p>
+              </div>
+            </div>
+            <div className="flex flex-col items-center text-center space-y-2">
+              <svg className="w-6 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <div>
+                <p className="text-sm font-medium text-gray-700">Quantity</p>
+                <p className="text-xs text-gray-600">Up to {maxFiles} files per upload</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
